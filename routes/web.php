@@ -3,6 +3,11 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ParkingController;
+
+use App\Http\Controllers\Admin\UserController;
+
+use App\Http\Middleware\AdminMiddleware;
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -37,3 +42,49 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::get('/admin-dashboard', fn () => Inertia::render('Admin/Dashboard'))
+        ->name('admin.dashboard');
+});
+
+// Route::get('/admin/users', function () {
+//     $users = \App\Models\User::all();
+//     return Inertia::render('Admin/Users', [
+//         'users' => $users,
+//     ]);
+// })->middleware(['auth', 'admin'])->name('admin.users');
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/attendant/parking', [ParkingController::class, 'index'])->name('parking.index');
+    Route::post('/attendant/check-in', [ParkingController::class, 'checkIn'])->name('parking.checkin');
+});
+
+
+
+// Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])->prefix('admin')->group(function () {
+//     Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+// });
+
+
+// Route::put('/admin/users/{user}', [UserController::class, 'update'])->name('admin.users.update');
+
+// Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
+//     ->prefix('admin')
+//     ->group(function () {
+//         Route::get('/users', [UserController::class, 'index'])->name('admin.users');
+//         Route::put('/users/{user}', [UserController::class, 'update'])->name('admin.users.update'); // ← Add this
+//     });
+
+Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/users', [UserController::class, 'index'])->name('users');
+        Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    });
+
+
+
