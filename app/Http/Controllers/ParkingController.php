@@ -10,8 +10,9 @@ class ParkingController extends Controller
 {
     public function index()
 {
+    dd('Reached controller'); // Debugging line
     $slots = ParkingSlot::all();
-    return Inertia::render('Attendant/AttendantDashboard', [
+    return Inertia::render('Attendant/Parking', [
         'slots' => $slots
     ]);
 }

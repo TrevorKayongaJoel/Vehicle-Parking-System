@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ParkinRecod extends Model
+class ParkingRecord extends Model
 {
     protected $fillable = ['vehicle_number', 'parking_slot_id', 'check_in_time', 'check_out_time'];
 
