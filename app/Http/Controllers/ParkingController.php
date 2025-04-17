@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ParkingSlot;
 use App\Models\ParkingRecord;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class ParkingController extends Controller
 {
@@ -58,12 +59,27 @@ public function checkOut(Request $request)
         return back()->withErrors(['slot' => 'No active parking record found for this slot.']);
     }
 
-    $record->update(['check_out_time' => now()]);
+    $checkIn = Carbon::parse($record->check_in_time);
+    $checkOut = now();
+    $durationInMinutes = $checkIn->diffInMinutes($checkOut);
+
+    $ratePerHour = 2.00;
+    $durationInHours = $durationInMinutes / 60;
+    $fee = round($durationInHours * $ratePerHour, 2);
+
+    $record->update([
+        'check_out_time' => $checkOut,
+        'fee' => $fee
+    ]);
+
     $slot->update(['is_occupied' => false]);
 
-    return redirect()->back()->with('success', 'Vehicle checked out!');
+    return redirect()->back()->with([
+        'success' => "Vehicle checked out!",
+        'duration_minutes' => $durationInMinutes,
+        'fee' => $fee,
+    ]);
 }
-
 // public function index()
 // {
 //     $slots = ParkingSlot::all();

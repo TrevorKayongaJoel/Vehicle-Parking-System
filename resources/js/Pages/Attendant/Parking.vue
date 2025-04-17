@@ -12,6 +12,9 @@ const props = defineProps({
   }
 })
 
+const checkoutResult = ref(null);
+
+
 // const props = defineProps({
 //   slots: Array,
 // })
@@ -37,6 +40,32 @@ const submitCheckIn = () => {
     },
   })
 }
+
+const checkOut = (slotId) => {
+  router.post(route('parking.checkout'), { slot_id: slotId }, {
+    onSuccess: (page) => {
+      const message = page.props.flash?.success || '';
+      const fee = page.props.flash?.fee;
+      const duration = page.props.flash?.duration_minutes;
+
+      if (fee !== undefined && duration !== undefined) {
+        checkoutResult.value = {
+          message,
+          fee,
+          duration,
+        };
+      }
+
+      router.reload({ only: ['slots'] });
+
+      setTimeout(() => {
+  checkoutResult.value = null;
+}, 7000); // clears message after 7 seconds
+
+    },
+  });
+};
+
 </script>
 
 <template>
@@ -98,5 +127,10 @@ const submitCheckIn = () => {
         </form>
       </div>
     </div>
+    <div v-if="checkoutResult" class="mt-4 p-4 bg-green-100 border border-green-400 text-green-800 rounded">
+  <p>{{ checkoutResult.message }}</p>
+  <p>Duration: {{ checkoutResult.duration }} minutes</p>
+  <p>Fee: ${{ checkoutResult.fee }}</p>
+</div>
   </AppLayout>
 </template>

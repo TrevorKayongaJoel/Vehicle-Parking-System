@@ -85,16 +85,16 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     });
 
-    Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':attendant'])
+    Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':attendant'])
     ->prefix('attendant')
     ->group(function () {
-        
-
         Route::get('/parking', [ParkingController::class, 'index'])->name('parking.index');
         Route::post('/check-in', [ParkingController::class, 'checkIn'])->name('parking.checkin');
-        //Route::post('/check-out/{parking}', [ParkingController::class, 'checkOut'])->name('parking.checkout');
-        Route::post('/attendant/check-out', [ParkingController::class, 'checkOut'])->name('parking.checkout');
     });
+
+// RESTful route outside group
+Route::post('/parking/checkout', [ParkingController::class, 'checkOut'])->name('parking.checkout');
+
 
 
 

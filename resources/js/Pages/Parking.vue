@@ -96,7 +96,8 @@ const submitCheckIn = () => {
 }
 
 const checkOut = (slotId) => {
-  router.post('/attendant/check-out', { slot_id: slotId }, {
+  console.log(route('parking.checkout'));
+  router.post('parking.checkout', { slot_id: slotId }, {
     onSuccess: () => router.reload({ only: ['slots'] })
   })
 }
