@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use App\Models\ParkingSlot;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,5 +28,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'attendant',
         ]);
+
+        foreach (range(1, 10) as $i) {
+            ParkingSlot::create([
+                'slot_number' => 'P-' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                'is_occupied' => false,
+            ]);
+        }
     }
 }
