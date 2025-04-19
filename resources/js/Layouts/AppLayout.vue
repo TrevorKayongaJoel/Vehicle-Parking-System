@@ -23,14 +23,24 @@
         </Link>
 
         <!-- Attendant Links -->
-        <Link
+        <!-- <Link
           v-if="user.role === 'attendant'"
           href="/attendant/parking"
           class="block hover:text-yellow-400"
         >
           Check-In Vehicles
-        </Link>
+        </Link> -->
+
+        <!-- <Link
+  href="/payments/create"
+  v-if="['admin', 'attendant'].includes(user.role)"
+  class="block hover:text-yellow-400"
+>
+  Payment
+</Link> -->
       </nav>
+
+ 
 
       <!-- Logout Button -->
       <form @submit.prevent="logout" class="mt-8">

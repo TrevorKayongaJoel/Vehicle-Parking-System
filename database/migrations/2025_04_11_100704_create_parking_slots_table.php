@@ -15,6 +15,8 @@ return new class extends Migration
         $table->id();
         $table->string('slot_number')->unique();
         $table->boolean('is_occupied')->default(false);
+        $table->string('type')->default('standard'); 
+        $table->decimal('hourly_rate', 8, 2)->default(5.00);
         $table->timestamps();
     });
 }

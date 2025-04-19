@@ -96,6 +96,14 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class.':admin'])
 Route::post('/parking/checkout', [ParkingController::class, 'checkOut'])->name('parking.checkout');
 
 
+use App\Http\Controllers\PaymentController;
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
+});
+
 
 
     

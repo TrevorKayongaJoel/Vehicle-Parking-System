@@ -36,37 +36,47 @@ const submitCheckIn = () => {
   })
 }
 
-const checkOut = (slotId) => {
-  router.post(route('parking.checkout'), { slot_id: slotId }, {
-    preserveScroll: true,
-    preserveState: true, // ✅ ADD THIS
-    onFinish: () => {
-      const flash = page.props.flash
+import axios from 'axios'
 
-      console.log('FLASH from usePage():', flash)
+const checkOut = async (slotId) => {
+  try {
+    const response = await axios.post(route('parking.checkout'), {
+      slot_id: slotId,
+    })
 
-      const message = flash?.success || ''
-      const fee = flash?.fee
-      const duration = flash?.duration_minutes
+    const { message, fee, duration_minutes } = response.data
 
-      if (fee !== undefined && duration !== undefined) {
-        checkoutResult.value = { message, fee, duration }
-      }
-
-      router.reload({ only: ['slots'] })
-
-      setTimeout(() => {
-        checkoutResult.value = null
-      }, 7000)
+    checkoutResult.value = {
+      message,
+      fee,
+      duration: duration_minutes,
     }
-  })
+
+    setTimeout(() => {
+      checkoutResult.value = null
+    }, 7000)
+
+    router.reload({ only: ['slots'] })
+  } catch (error) {
+    if (error.response?.data?.redirect) {
+      // ✅ If payment required, redirect to the payment page
+      window.location.href = error.response.data.redirect
+    } else {
+      console.error('Checkout error:', error)
+    }
+  }
 }
+
 </script>
 
 <template>
   <AppLayout>
     <h1 class="text-2xl font-bold mb-6">Parking Slots</h1>
 
+    <div v-if="page.props.flash?.status" class="bg-green-100 text-green-700 p-3 rounded mb-4">
+      {{ page.props.flash.status }}
+    </div>
+    
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div
         v-for="slot in slots"
