@@ -97,7 +97,7 @@ const submit = () => {
             :class="{ 'opacity-25': form.processing }"
             :disabled="form.processing"
           >
-            Log in
+            Sign in
           </PrimaryButton>
         </div>
       </form>
@@ -105,7 +105,7 @@ const submit = () => {
       <div class="text-center mt-6 text-sm text-gray-600">
         Don't have an account? 
         <Link :href="route('register')" class="text-blue-600 hover:underline">
-          Register here
+          Create Account
         </Link>
       </div>
     </div>
