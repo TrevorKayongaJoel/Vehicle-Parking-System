@@ -12,7 +12,8 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = \App\Models\User::all();
+        
         return Inertia::render('Admin/Users', [
             'users' => $users
         ]);
@@ -29,10 +30,14 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
-        ]);
+                'role' => $request->role,
+            ]);
+            \Log::info('Updating user role', [
+                'id' => $user->id,
+                'new_role' => $request->role
+            ]);;
     
-        return back(); // Or use return redirect()->route('admin.users');
+        return redirect()->route('admin.users')->with('status', 'User updated successfully!');
     }
     
 }

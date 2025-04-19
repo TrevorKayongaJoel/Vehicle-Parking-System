@@ -4,7 +4,8 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParkingController;
-
+use Illuminate\Support\Carbon;
+use App\Models\ParkingRecord;
 use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Middleware\AdminMiddleware;
@@ -50,19 +51,26 @@ Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::clas
     })->name('attendant.dashboard');
 });
 
-Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
-    Route::get('/admin-dashboard', fn () => Inertia::render('AdminDashboard'))
-        ->name('admin.dashboard');
-});
+Route::get('/admin-dashboard', function () {
+    $today = \Carbon\Carbon::today();
+
+    $todayCheckins = \App\Models\ParkingRecord::whereDate('check_in_time', $today)->count();
+    $todayRevenue = \App\Models\ParkingRecord::whereDate('check_out_time', $today)->sum('fee');
+
+    $todayRevenue = round(\App\Models\ParkingRecord::whereDate('check_out_time', $today)->sum('fee'));
+
+
+    return Inertia::render('AdminDashboard', [
+        'todayCheckins' => $todayCheckins,
+        'todayRevenue' => $todayRevenue,
+    ]);
+})->middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->name('admin.dashboard');
+
 
 
 
 require __DIR__.'/auth.php';
 
-Route::middleware(['auth', 'verified', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
-    Route::get('/admin-dashboard', fn () => Inertia::render('AdminDashboard'))
-        ->name('admin.dashboard');
-});
 
 
 
@@ -104,14 +112,36 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/payments/store', [PaymentController::class, 'store'])->name('payments.store');
 });
 
+Route::get('/admin/reports', [\App\Http\Controllers\Admin\ParkingReportController::class, 'index'])
+    ->name('admin.reports');
 
+
+    Route::middleware(['auth'])->get('/admin/dashboard-summary', function () 
+        {
+        $today = \Carbon\Carbon::today();
+    
+        return response()->json([
+            'todayCheckins' => \App\Models\ParkingRecord::whereDate('check_in_time', $today)->count(),
+            'todayRevenue' => \App\Models\ParkingRecord::whereDate('check_out_time', $today)->sum('fee'),
+        ]);
+    });
 
     
 
+    Route::get('/admin/daily-fees', function () {
+        $records = ParkingRecord::whereNotNull('check_out_time')
+            ->whereDate('check_out_time', '>=', Carbon::now()->subDays(7))
+            ->orderBy('check_out_time')
+            ->get()
+            ->groupBy(fn($r) => Carbon::parse($r->check_out_time)->toDateString())
+            ->map(fn($group) => $group->sum('fee'));
     
-
-  
-
+        return response()->json([
+            'dates' => $records->keys()->values(),
+            'fees' => $records->values()->map(fn($fee) => round($fee)),
+        ]);
+    });
+    
 
 
 

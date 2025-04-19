@@ -82,9 +82,9 @@ public function checkOut(Request $request)
     $checkIn = Carbon::parse($record->check_in_time);
     $checkOut = now();
     $durationInMinutes = $checkIn->diffInMinutes($checkOut);
-    $ratePerHour = 2.00;
+    $ratePerHour = 1000; // Example rate per hour
     $durationInHours = $durationInMinutes / 60;
-    $fee = round($durationInHours * $ratePerHour, 2);
+    $fee = round($durationInHours * $ratePerHour);
 
     $record->update([
         'check_out_time' => $checkOut,

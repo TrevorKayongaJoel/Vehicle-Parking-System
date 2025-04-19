@@ -27,9 +27,9 @@ class PaymentController extends Controller
             $checkIn = Carbon::parse($record->check_in_time);
             $now = now();
             $durationMinutes = $checkIn->diffInMinutes($now);
-            $ratePerHour = 2.00;
+            $ratePerHour = 1000;
 
-            $fee = round(($durationMinutes / 60) * $ratePerHour, 2);
+            $fee = round(($durationMinutes / 60) * $ratePerHour);
         }
     }
 
