@@ -47,9 +47,17 @@
         <button type="submit" class="text-red-400 hover:text-red-600">Logout</button>
       </form>
     </aside>
-
+    
     <!-- Main Content -->
     <main class="flex-1 p-6">
+      <div>
+            <img
+          src="/Pics/nn.jpg"
+          alt="VPMS Logo"
+          class="mx-auto mb-8 h-40 w-auto"
+        />
+
+    </div>
       <slot />
     </main>
   </div>
