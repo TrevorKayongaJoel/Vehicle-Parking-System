@@ -8,9 +8,14 @@ import { Link } from '@inertiajs/vue3';
         class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0 dark:bg-gray-900"
     >
         <div>
-            <Link href="/">
+            <img
+          src="/Pics/Your paragraph text.png"
+          alt="VPMS Logo"
+          class="mx-auto mb-8 h-40 w-auto"
+        />
+            <!-- <Link href="/">
                 <ApplicationLogo class="h-20 w-20 fill-current text-gray-500" />
-            </Link>
+            </Link> -->
         </div>
 
         <div
